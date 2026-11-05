@@ -1,0 +1,5 @@
+FROM hf.co/lukey03/Qwen3.5-9B-abliterated-GGUF
+TEMPLATE {{ .Prompt }}
+RENDERER qwen3.5
+PARSER qwen3.5
+PARAMETER num_ctx 64000

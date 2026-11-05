@@ -1,0 +1,14 @@
+# Виртуальное окружение
+.venv/
+ENV_DIR=~/
+
+# Папки с данными (PDF и результаты)
+pdfs/
+output/
+
+# Кэш Python
+__pycache__/
+*.pyc
+
+# Системные файлы Mac
+.DS_Store
