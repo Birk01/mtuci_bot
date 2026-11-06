@@ -27,7 +27,9 @@ def parse_pdfs(pdf_dir: str, output_file: str):
             full_path = os.path.join(pdf_dir, pdf_file)
             
             try:
-                md_content = converter(full_path)
+                rendered = converter(full_path)
+                # marker-pdf возвращает объект DocumentWithImages, текст — в .markdown
+                md_content = getattr(rendered, 'markdown', str(rendered))
                 
                 output.write(f'=== {pdf_file}\n\n')
                 output.write(md_content[:3000])

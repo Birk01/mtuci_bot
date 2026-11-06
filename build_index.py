@@ -40,7 +40,9 @@ class IndexBuilder:
         with open(corpus_path, 'r', encoding='utf-8') as f:
             text = f.read()
         
-        raw_text = text.split('=== ')[1] if '===' in text else text
+        # Разбиваем корпус по маркерам файлов ('=== '), беря ВСЕ части, а не первую
+        parts = text.split('=== ')
+        raw_text = '\n'.join(parts[1:]) if len(parts) > 1 else text
         chunks = chunk_markdown(raw_text)
         print(f"Найдено чанков: {len(chunks)}")
         
@@ -55,7 +57,7 @@ class IndexBuilder:
         
         import json
         with open(chunks_path, 'w', encoding='utf-8') as f:
-            json.dump(chunks[:1000], f, ensure_ascii=False)  # Ограничим хранение
+            json.dump(chunks, f, ensure_ascii=False)  # Сохраняем ВСЕ чанки (иначе индексы в FAISS будут ссылаться на несуществующие чанки)
         
         print(f"✓ Индекс сохранён в {index_path}")
         print(f"✓ Чанки ({len(chunks)} штук) сохранены в {chunks_path}")

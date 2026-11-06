@@ -35,7 +35,10 @@ if st.button("✨ Задать вопрос", key="ask_btn"):
                 with st.expander("📚 Источники"):
                     for i, source in enumerate(result['sources'], 1):
                         st.subheader(f"Источник {i}")
-                        st.info(f"Релевантность: 1/{source['distance']:.2f}")
+                        # distance == 0 (идеальное совпадение) иначе вызывал ZeroDivisionError
+                        distance = float(source['distance'])
+                        relevance = "идеальное совпадение" if distance < 1e-6 else f"1/{distance:.2f}"
+                        st.info(f"Релевантность: {relevance}")
                         st.text(source['text'][:300] + "..." if len(source['text']) > 300 else source['text'])
             except Exception as e:
                 st.error(f"Ошибка: {e}")

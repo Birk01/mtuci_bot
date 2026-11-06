@@ -10,28 +10,32 @@ class RAGBot:
         self.embedding_model = embedding_model
         self.encoder = SentenceTransformer(embedding_model)
         
-        self.chunks = None
+        self.chunks = []
         self.index = None
         
         if os.path.exists(index_path):
-            dim = self.encoder.embeddings.embedding_dim
             self.index = faiss.read_index(index_path)
             
             import json
             with open(chunks_path, 'r', encoding='utf-8') as f:
-                all_chunks = json.load(f)
+                self.chunks = json.load(f)
             
-            print(f"✓ Индекс загружен ({len(all_chunks)} чанков)")
+            print(f"✓ Индекс загружен ({len(self.chunks)} чанков)")
         else:
             raise FileNotFoundError("Сначала создайте индекс через build_index.py")
     
-    def search(self, query: str, top_k: int = 3, index_path: str = "output/index.faiss"):
+    def search(self, query: str, top_k: int = 3):
         """Ищет релевантные чанки по запросу."""
         
-        if not self.index:
+        if self.index is None:
             raise RuntimeError("Сначала загрузите индекс")
         
-        query_emb = self.encoder.encode([query])
+        # Ограничиваем top_k реальным числом чанков в индексе
+        top_k = min(top_k, self.index.ntotal)
+        if top_k <= 0:
+            return []
+        
+        query_emb = self.encoder.encode([query]).astype('float32')
         
         D, I = self.index.search(query_emb, top_k)
         
