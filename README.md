@@ -5,9 +5,8 @@
 ## Что реализовано за 3 недели практики:
 
 ### Неделя 1: Парсинг документов
-- ✅ `parse.py` — конвертация PDF в Markdown через marker-pdf
+- ✅ `parse.py` — сборка Markdown-корпуса: тексты получены через чат DeepSeek (скидывал PDF → получал текст), затем склеены в `output/combined.md`. Маркер-парсер (`marker-pdf`) оставлен как запасной вариант, так как парсит слишком медленно
 - ✅ Обработка ~60 официальных документов университета
-- ✅ Следила работа на Mac M5 с Apple Silicon
 
 ### Неделя 2: Векторный индекс
 - ✅ `build_index.py` — разделение текста на чанки по заголовкам
@@ -28,7 +27,7 @@ source .venv/bin/activate
 # 2. Установить зависимости
 pip install torch sentence-transformers faiss-cpu streamlit marker-pdf tqdm unstructured[pdf]
 
-# 3. Парсить PDF в Markdown
+# 3. Собрать combined.md из готовых markdown-файлов (папка parsed/)
 python parse.py
 
 # 4. Создать векторный индекс
@@ -44,7 +43,8 @@ pip install -r requirements.txt
 
 ```
 pdfs/                          — исходные PDF документы
-output/combined.md            — объединённый Markdown после парсинга
+parsed/                        — готовые markdown-тексты (из DeepSeek), по файлу на документ
+output/combined.md            — объединённый Markdown-корпус
 output/index.faiss            — FAISS векторный индекс
 output/chunks.json            — сохранённые чанки
 rag.py                        — класс RAGBot (search + generate)

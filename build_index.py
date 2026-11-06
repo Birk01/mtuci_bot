@@ -40,9 +40,20 @@ class IndexBuilder:
         with open(corpus_path, 'r', encoding='utf-8') as f:
             text = f.read()
         
-        # Разбиваем корпус по маркерам файлов ('=== '), беря ВСЕ части, а не первую
+        # Разбиваем корпус по маркерам файлов ('=== filename.pdf'),
+        # беря ВСЕ части, а не только вторую. Заголовок файла превращаем
+        # в markdown-заголовок, чтобы он попадал в чанки и помогал поиску.
         parts = text.split('=== ')
-        raw_text = '\n'.join(parts[1:]) if len(parts) > 1 else text
+        if len(parts) > 1:
+            sections = []
+            for part in parts[1:]:
+                lines = part.split('\n', 1)
+                fname = lines[0].strip()
+                body = lines[1] if len(lines) > 1 else ''
+                sections.append(f"# {fname}\n{body}")
+            raw_text = '\n\n'.join(sections)
+        else:
+            raw_text = text
         chunks = chunk_markdown(raw_text)
         print(f"Найдено чанков: {len(chunks)}")
         
